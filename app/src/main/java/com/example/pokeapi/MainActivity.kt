@@ -10,6 +10,7 @@ import com.example.pokeapi.PokeScreen.HomeScreen
 import com.example.pokeapi.ui.theme.PokeApiTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

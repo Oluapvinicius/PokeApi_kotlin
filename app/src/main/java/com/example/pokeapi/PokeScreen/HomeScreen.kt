@@ -2,123 +2,118 @@ package com.example.pokeapi.PokeScreen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedCard
-
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.pokeapi.components.Logo
+import com.example.pokeapi.modules.PokemonType
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-
-    var text by remember { mutableStateOf("") }
+fun HomeScreen(vm: PokeViewModel = viewModel()) {
+    val list = vm.getFilteredList()
 
     Column(modifier = Modifier.fillMaxSize()) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Red)
-                .height(82.dp),
-
-            // horizontalArrangement = Arrangement.Center,
+                .background(Color(0xFFDC0A2D))
+                .height(80.dp)
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Logo()
+
         }
-        Spacer(modifier = Modifier.height(10.dp))
+
 
         OutlinedTextField(
-            value = text,
-            shape = RoundedCornerShape(12.dp),
-            onValueChange = { newText -> text = newText },
-            placeholder = { Text("Nome ou ID") },
+            value = vm.searchQuery,
+            onValueChange = { vm.searchQuery = it },
+            placeholder = { Text("Nome ou ID", fontSize = 14.sp) },
             modifier = Modifier
-                .height(85.dp)
                 .fillMaxWidth()
                 .padding(16.dp),
-
-            trailingIcon = {
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = ""
-                    )
-                }
-            }
+            shape = RoundedCornerShape(16.dp),
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.LightGray,
+                unfocusedBorderColor = Color.LightGray
+            )
         )
 
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(8.dp),
+            contentPadding = PaddingValues(12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
-
-            items(50) { index ->
-                OutlinedCard(
-                    onClick = {  },
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, Color.LightGray),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column() {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(80.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Item $index")
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.Blue)
-                                .padding(vertical = 4.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Nome",
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
+            items(list) { pokemon ->
+                PokemonCard(pokemon)
             }
         }
+    }
+}
 
+@Composable
+fun PokemonCard(pokemon: com.example.pokeapi.modules.Pokemon) {
+
+    val colorType = PokemonType.fromString(pokemon.type).color
+
+    OutlinedCard(
+        shape = RoundedCornerShape(8.dp),
+
+        border = BorderStroke(1.dp, colorType),
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+            Text(
+                text = "#${pokemon.id.toString().padStart(3, '0')}",
+                modifier = Modifier.padding(4.dp).align(Alignment.End),
+                fontSize = 10.sp,
+                color = colorType,
+                fontWeight = FontWeight.Bold
+            )
+
+            AsyncImage(
+                model = pokemon.imageUrl,
+                contentDescription = pokemon.name,
+                modifier = Modifier.size(80.dp).padding(4.dp)
+            )
+
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorType)
+                    .padding(vertical = 4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = pokemon.name,
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
 }
