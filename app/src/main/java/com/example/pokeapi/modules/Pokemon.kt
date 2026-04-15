@@ -1,12 +1,14 @@
 package com.example.pokeapi.modules
 
 import androidx.compose.ui.graphics.Color
+import com.google.gson.annotations.SerializedName
 
 enum class PokemonType(val color: Color) {
     GRASS(Color(0xFF74CB48)),
     FIRE(Color(0xFFF57D31)),
     WATER(Color(0xFF6493EB)),
     BUG(Color(0xFFA7B723)),
+    FAIRY(Color(0xFFA00CFF)),
     NORMAL(Color(0xFFAAA67F)),
     POISON(Color(0xFFA43E9E)),
     ELECTRIC(Color(0xFFF9CF30)),
@@ -19,7 +21,7 @@ enum class PokemonType(val color: Color) {
     }
 }
 
-data class PokemonListResponse(val results: List<PokemonNamedResource>)
+
 data class PokemonNamedResource(val name: String, val url: String)
 
 data class Pokemon(
@@ -27,4 +29,45 @@ data class Pokemon(
     val name: String,
     val imageUrl: String,
     val type: String
+)
+
+
+
+data class TypeInfo(
+    val name: String,
+    val url: String
+)
+
+
+data class PokemonListResponse(
+    val results: List<PokemonBasic>
+)
+
+data class PokemonBasic(
+    val name: String,
+    val url: String
+)
+
+data class PokemonDetailResponse(
+    val id: Int,
+    val name: String,
+    val types: List<TypeSlot>,
+    val sprites: Sprites
+)
+
+data class TypeSlot(
+    val type: TypeInfo
+)
+
+
+data class Sprites(
+    @SerializedName("other") val other: OtherSprites
+)
+
+data class OtherSprites(
+    @SerializedName("official-artwork") val officialArtwork: OfficialArtwork
+)
+
+data class OfficialArtwork(
+    @SerializedName("front_default") val frontDefault: String
 )
