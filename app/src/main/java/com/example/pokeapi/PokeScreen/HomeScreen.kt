@@ -20,10 +20,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.pokeapi.components.Logo
+import com.example.pokeapi.modules.Pokemon
 import com.example.pokeapi.modules.PokemonType
 
 @Composable
-fun HomeScreen(vm: PokeViewModel = viewModel()) {
+fun HomeScreen(vm: PokeViewModel = viewModel(), onPokemonClick: (Int) -> Unit) {
     val list = vm.getFilteredList()
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -65,29 +66,37 @@ fun HomeScreen(vm: PokeViewModel = viewModel()) {
             modifier = Modifier.fillMaxSize()
         ) {
             items(list) { pokemon ->
-                PokemonCard(pokemon)
+
+                PokemonCard(
+                    pokemon = pokemon,
+                    onPokemonClick = onPokemonClick
+                )
             }
+
         }
     }
 }
-
 @Composable
-fun PokemonCard(pokemon: com.example.pokeapi.modules.Pokemon) {
+fun PokemonCard(
+    pokemon: com.example.pokeapi.modules.Pokemon,
+    onPokemonClick: (Int) -> Unit
+) {
 
     val colorType = PokemonType.fromString(pokemon.type).color
 
     OutlinedCard(
+        onClick = { onPokemonClick(pokemon.id) },
         shape = RoundedCornerShape(8.dp),
-
         border = BorderStroke(1.dp, colorType),
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
             Text(
                 text = "#${pokemon.id.toString().padStart(3, '0')}",
-                modifier = Modifier.padding(4.dp).align(Alignment.End),
+                modifier = Modifier
+                    .padding(4.dp)
+                    .align(Alignment.End),
                 fontSize = 10.sp,
                 color = colorType,
                 fontWeight = FontWeight.Bold
@@ -96,9 +105,10 @@ fun PokemonCard(pokemon: com.example.pokeapi.modules.Pokemon) {
             AsyncImage(
                 model = pokemon.imageUrl,
                 contentDescription = pokemon.name,
-                modifier = Modifier.size(80.dp).padding(4.dp)
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(4.dp)
             )
-
 
             Box(
                 modifier = Modifier

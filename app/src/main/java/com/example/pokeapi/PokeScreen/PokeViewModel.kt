@@ -1,8 +1,10 @@
 package com.example.pokeapi.PokeScreen
 
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokeapi.modules.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -52,4 +54,29 @@ class PokeViewModel : ViewModel() {
             it.name.contains(searchQuery, ignoreCase = true) || it.id.toString() == searchQuery
         }
     }
+
+
+    class DetailViewModel : ViewModel() {
+        var pokemonDetails by mutableStateOf<PokemonDetailResponse?>(null)
+            private set
+
+        fun getPokemonDetails(id: Int) {
+            viewModelScope.launch {
+                try {
+
+                    val response =
+                        PokeApiService.RetrofitInstance.api.getPokemonDetails(id.toString())
+                    pokemonDetails = response
+                } catch (e: Exception) {
+
+                }
+            }
+        }
+    }
+
+
 }
+
+
+
+

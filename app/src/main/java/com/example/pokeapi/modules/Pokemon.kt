@@ -51,8 +51,20 @@ data class PokemonBasic(
 data class PokemonDetailResponse(
     val id: Int,
     val name: String,
+    val weight: Int,
+    val height: Int,
+    val stats: List<StatSlot>,
     val types: List<TypeSlot>,
     val sprites: Sprites
+)
+
+data class StatSlot(
+    @SerializedName("base_stat") val baseValue: Int,
+    val stat: StatInfo
+)
+
+data class StatInfo(
+    val name: String
 )
 
 data class TypeSlot(
