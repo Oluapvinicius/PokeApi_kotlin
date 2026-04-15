@@ -37,7 +37,7 @@ class PokeViewModel : ViewModel() {
                         id = detail.id,
                         name = detail.name.replaceFirstChar { it.uppercase() },
                         imageUrl = detail.sprites.other.officialArtwork.frontDefault,
-                        type = detail.types.firstOrNull()?.type?.name ?: "Unknown"
+                        type = detail.types.firstOrNull()?.type?.name ?: ""
                     )
                 }
             } catch (e: Exception) {
